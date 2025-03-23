@@ -49,7 +49,7 @@ with open('knesset.txt') as fp, open('knesset_niqqud.txt', 'w') as out:
                 results = model.predict(batch, tokenizer)
                 # assert all lines without niqqud eaual to the original and show differences
                 for i, (original, result) in enumerate(zip(batch, results)):
-                    assert remove_niqqud(original) == remove_niqqud(result), f'{original} != {result}'
+                    assert remove_niqqud(original) == remove_niqqud(result), f'{remove_niqqud(original)} != {remove_niqqud(result)}'
                 out.writelines([r + '\n' for r in results])
                 out.flush()
             except Exception as e:
