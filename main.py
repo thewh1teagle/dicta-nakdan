@@ -35,8 +35,9 @@ with open('knesset.txt') as fp, open('knesset_niqqud.txt', 'w') as out:
         if not line:
             continue
         try:
-            out.write(model.predict([line], tokenizer) + '\n')
+            out.write(model.predict([line], tokenizer)[0] + '\n')
             out.flush()
+            breakpoint()
         except Exception as e:
             print(f'Error: {e}')
             out.write('\n')
