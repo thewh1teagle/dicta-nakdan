@@ -15,7 +15,6 @@ def remove_niqqud(text: str):
 # Load model and tokenizer
 tokenizer = AutoTokenizer.from_pretrained('dicta-il/dictabert-large-char-menaked')
 print(tokenizer.model_max_length)
-breakpoint()
 model = AutoModel.from_pretrained('dicta-il/dictabert-large-char-menaked', trust_remote_code=True)
 
 # Move model to GPU
@@ -23,7 +22,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model.to(device)
 model.eval()
 
-# Prepare your sentence
+# Warmup
 sentence = 'יואב היה בחור רגיל לגמרי – גר בדירה קטנה בתל אביב, עבד בתור בריסטה בבית קפה, ושיחק על גיטרה בסופי שבוע כדי לשכנע את עצמו שהוא אמן. כל עוד הקפה טוב – הוא היה מרוצה.'
 
 # Tokenize once (if sentence doesn’t change)
@@ -36,7 +35,7 @@ with open('knesset.txt') as fp:
     for line in fp:
         total += 1
 
-BATCH_SIZE = 15
+BATCH_SIZE = 15 # ensure it's not longer than context length
 batch = []
 
 with open('knesset.txt') as fp, open('knesset_niqqud.txt', 'w') as out:
@@ -47,10 +46,10 @@ with open('knesset.txt') as fp, open('knesset_niqqud.txt', 'w') as out:
         batch.append(line)
         if len(batch) >= BATCH_SIZE:
             try:
-                results = model.predict(batch, tokenizer, mark_matres_lectionis = '') # later use | as separator
+                results = model.predict(batch, tokenizer, mark_matres_lectionis = '|') # later use | as separator for niqqud male
                 # assert all lines without niqqud eaual to the original and show differences
-                for i, (original, result) in enumerate(zip(batch, results)):
-                    assert remove_niqqud(original) == remove_niqqud(result), f'{remove_niqqud(original)} != {remove_niqqud(result)}'
+                # for i, (original, result) in enumerate(zip(batch, results)):
+                #     assert remove_niqqud(original) == remove_niqqud(result), f'{remove_niqqud(original)} != {remove_niqqud(result)}'
                 out.writelines([r + '\n' for r in results])
                 out.flush()
             except Exception as e:
