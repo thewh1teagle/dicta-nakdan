@@ -1,3 +1,6 @@
+"""
+wget https://huggingface.co/datasets/thewh1teagle/hebright/resolve/main/knesset.txt.zip
+"""
 from transformers import AutoModel, AutoTokenizer
 import torch
 import time
