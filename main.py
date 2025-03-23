@@ -29,19 +29,33 @@ with open('knesset.txt') as fp:
     for line in fp:
         total += 1
 
+BATCH_SIZE = 32
+batch = []
+
 with open('knesset.txt') as fp, open('knesset_niqqud.txt', 'w') as out:
     for line in tqdm(fp, total=total):
         line = line.strip()
         if not line:
             continue
+        batch.append(line)
+        if len(batch) >= BATCH_SIZE:
+            try:
+                results = model.predict(batch, tokenizer)
+                out.writelines([r + '\n' for r in results])
+                out.flush()
+            except Exception as e:
+                print(f'Batch error: {e}')
+                out.writelines(['\n'] * len(batch))
+            batch = []
+            breakpoint()
+
+    # Final batch (leftovers)
+    if batch:
         try:
-            out.write(model.predict([line], tokenizer)[0] + '\n')
-            out.flush()
+            results = model.predict(batch, tokenizer)
+            out.writelines([r + '\n' for r in results])
         except Exception as e:
-            print(f'Error: {e}')
-            out.write('\n')
-            
-        
-    
+            print(f'Final batch error: {e}')
+            out.writelines(['\n'] * len(batch))
     
     
