@@ -30,7 +30,7 @@ with open('knesset.txt') as fp:
         total += 1
 
 with open('knesset.txt') as fp, open('knesset_niqqud.txt', 'w') as out:
-    for line in tqdm.tqdm(fp, total=total):
+    for line in tqdm(fp, total=total):
         line = line.strip()
         if not line:
             continue
