@@ -9,7 +9,7 @@ import re
 
 
 def remove_niqqud(text: str):
-    return re.sub(vocab.HE_NIQQUD_PATTERN, "", text)
+    return re.sub(r"[\u05B0-\u05C7]", "", text)
 
 
 # Load model and tokenizer
